@@ -19,4 +19,10 @@ router.get('/', function(req, res, next) {
     })
 });
 
+router.get('/clients', function(req, res, next) {
+    connection.query("SELECT * FROM client", function(err, data) {
+        (err)?res.send(err):res.json({clients: data})
+    })
+});
+
 module.exports = router;
