@@ -14,7 +14,7 @@ connection.connect(function(err) {
 })
 
 router.get('/', function(req, res, next) {
-    connection.query("INSERT INTO client VALUES (3, 'test', 'ZHANG', '11111')", function(err, data) {
+    connection.query("INSERT INTO client VALUES (4, 'test', 'ZHANG', '11111')", function(err, data) {
         (err)?res.send(err):res.json({clients: data})
     })
 });
