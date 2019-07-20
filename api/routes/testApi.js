@@ -3,6 +3,7 @@ var fs = require('fs');
 var router = express.Router();
 const mysql = require('mysql')
 
+var shouldPopulateWithInitialData = false;
 var initialData = fs.readFileSync('perfect_party.sql').toString();
 
 const connection = mysql.createConnection({
@@ -14,9 +15,11 @@ const connection = mysql.createConnection({
 
 connection.connect(function(err) {
 	(err)? console.log(err): console.log(connection);
-	connection.query(initialData, function(err, result) {
-        (err)? console.log('error loading initial data: ', err): console.log(result);
-  });
+	if (shouldPopulateWithInitialData) {
+		connection.query(initialData, function(err, result) {
+	        (err)? console.log('error loading initial data: ', err): console.log(result);
+	  });
+	}
 })
 
 router.get('/', function(req, res, next) {
