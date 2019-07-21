@@ -29,12 +29,20 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/clients', function(req, res, next) {
-		var queryStr = "SELECT * FROM client WHERE TRUE";
-		queryStr += (res.query.id) ? "AND id = ${res.query.id}" : ""
-		queryStr += (res.query.first_name) ? "AND first_name = ${res.query.first_name}" : ""
-		queryStr += (res.query.last_name) ? "AND last_name = ${res.query.last_name}" : ""
-		queryStr += (res.query.phone_number) ? "AND phone_number = ${res.query.phone_number}" : ""
+		var queryStr = 'SELECT * FROM client WHERE TRUE';
+		queryStr += (req.query.id) ? 'AND id = ${req.query.id}' : ''
+		queryStr += (req.query.first_name) ? 'AND first_name = ${req.query.first_name}' : ''
+		queryStr += (req.query.last_name) ? 'AND last_name = ${req.query.last_name}' : ''
+		queryStr += (req.query.phone_number) ? 'AND phone_number = ${req.query.phone_number}' : ''
+    connection.query(queryStr, function(err, data) {
+        (err)?res.send(err):res.json({clients: data})
+    })
+});
 
+// Get events and cost per each event for a given user
+router.get('/clients/:user_id', function(req, res, next) {
+		var user_id = req.params.user_id;
+		const queryStr = 'SELECT event_id,`date`,LOCATION,title,SUM(cost_per_unit*units)FROM`Event` NATURAL JOIN Vendor_Item NATURAL JOIN`Transaction` WHERE user_id=${user_id} GROUP BY event_id,date,LOCATION,title'
     connection.query(queryStr, function(err, data) {
         (err)?res.send(err):res.json({clients: data})
     })
