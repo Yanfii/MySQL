@@ -29,7 +29,13 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/clients', function(req, res, next) {
-    connection.query("SELECT * FROM client", function(err, data) {
+		var queryStr = "SELECT * FROM client WHERE TRUE";
+		queryStr += (res.query.id) ? "AND id = ${res.query.id}" : ""
+		queryStr += (res.query.first_name) ? "AND first_name = ${res.query.first_name}" : ""
+		queryStr += (res.query.last_name) ? "AND last_name = ${res.query.last_name}" : ""
+		queryStr += (res.query.phone_number) ? "AND phone_number = ${res.query.phone_number}" : ""
+
+    connection.query(queryStr, function(err, data) {
         (err)?res.send(err):res.json({clients: data})
     })
 });
