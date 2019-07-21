@@ -1,6 +1,8 @@
 import React from 'react';
 import './Table.css';
 import MaterialTable from 'material-table';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 
 function createData (id, first_name, last_name, num) {
   return { id, first_name, last_name, num };
@@ -25,6 +27,8 @@ export default function SimpleTable(props) {
   });
 
   return (
+    <div>
+    <NotificationContainer/>
     <MaterialTable
       title=""
       columns={state.columns}
@@ -47,7 +51,7 @@ export default function SimpleTable(props) {
                 }).then(response => {
                   return response.json()
                 }).then(json => {
-                  console.log(json)
+                  NotificationManager.success('Client created successfully!', 'Success');
                 })
                 const data = [...state.data];
                 data.push(newData);
@@ -76,5 +80,7 @@ export default function SimpleTable(props) {
           }),
       }}
     />
+    </div>
+    
   );
 }
