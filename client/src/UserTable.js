@@ -6,7 +6,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import EditIcon from '@material-ui/icons/Edit'
-import Link from 'react-router';
+import { Link } from 'react-router-dom';
 import './Table.css';
 
 
@@ -38,13 +38,13 @@ export default function SimpleTable(props) {
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">{row.id}</TableCell>
               <TableCell>
-                <Link to="users/{row.id}">
+                <Link>
                   <EditIcon/>
                 </Link>
                 {row.name}
               </TableCell>
               <TableCell>{row.num}</TableCell>
-              <TableCell>View</TableCell>
+              <TableCell>View events</TableCell>
             </TableRow>
           ))}
         </TableBody>
