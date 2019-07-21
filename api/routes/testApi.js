@@ -9,8 +9,10 @@ var initialData = fs.readFileSync('perfect_party.sql').toString();
 const connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
+  password: '123456789',
 	database: 'cs348',
-	multipleStatements: true
+	multipleStatements: true,
+  insecureAuth: true,
 })
 
 connection.connect(function(err) {
