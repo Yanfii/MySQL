@@ -37,7 +37,7 @@ export default function SimpleTable(props) {
               <TableCell component="th" scope="row">{row.id}</TableCell>
               <TableCell>{row.name}</TableCell>
               <TableCell>{row.num}</TableCell>
-              <TableCell>View events</TableCell>
+              <TableCell>View</TableCell>
             </TableRow>
           ))}
         </TableBody>
