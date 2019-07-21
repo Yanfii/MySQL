@@ -7,6 +7,8 @@
 }
 .table {
     min-width: 650px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
 .edit {
     margin-right: 5px;

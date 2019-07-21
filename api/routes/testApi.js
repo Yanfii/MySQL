@@ -9,7 +9,7 @@ var initialData = fs.readFileSync('perfect_party.sql').toString();
 const connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
-  password: '123456789',
+  password: 'bojana',
 	database: 'cs348',
 	multipleStatements: true,
   insecureAuth: true,
@@ -24,18 +24,18 @@ connection.connect(function(err) {
 	}
 })
 
-router.get('/', function(req, res, next) {
-    connection.query("INSERT INTO client VALUES (4, 'test', 'ZHANG', '11111')", function(err, data) {
+router.put('/test', function(req, res, next) {
+    connection.query(`INSERT INTO client (first_name, last_name, phone_number) VALUES (${req.body.first_name}, ${req.body.last_name}, ${req.body.phone_number})`, function(err, data) {
         (err)?res.send(err): res.json({clients: data})
     })
 });
 
 router.get('/clients', function(req, res, next) {
 		var queryStr = 'SELECT * FROM client WHERE TRUE';
-		queryStr += (req.query.id) ? 'AND id = ${req.query.id}' : ''
-		queryStr += (req.query.first_name) ? 'AND first_name = ${req.query.first_name}' : ''
-		queryStr += (req.query.last_name) ? 'AND last_name = ${req.query.last_name}' : ''
-		queryStr += (req.query.phone_number) ? 'AND phone_number = ${req.query.phone_number}' : ''
+		queryStr += (req.query.id) ? `AND id = ${req.query.id}` : ''
+		queryStr += (req.query.first_name) ? `AND first_name = ${req.query.first_name}` : ''
+		queryStr += (req.query.last_name) ? `AND last_name = ${req.query.last_name}` : ''
+		queryStr += (req.query.phone_number) ? `AND phone_number = ${req.query.phone_number}` : ''
     connection.query(queryStr, function(err, data) {
         (err)?res.send(err):res.json({clients: data})
     })

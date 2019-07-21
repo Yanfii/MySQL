@@ -1,19 +1,9 @@
 import React from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import EditIcon from '@material-ui/icons/Edit'
-import { Link } from 'react-router-dom';
 import './Table.css';
 import MaterialTable from 'material-table';
 
-
-
-function createData (id, name, num) {
-  return { id, name, num };
+function createData (id, first_name, last_name, num) {
+  return { id, first_name, last_name, num };
 }
 
 var rows = [];
@@ -21,13 +11,14 @@ var rows = [];
 export default function SimpleTable(props) {
   var clients = props.clients
   clients.forEach( (client) =>
-    rows.push(createData(client.user_id, client.first_name + " " + client.last_name, client.phone_number))
+    rows.push(createData(client.user_id, client.first_name, client.last_name, client.phone_number))
   )
 
   const [state, setState] = React.useState({
     columns: [
       { title: 'User ID', field: 'id', type: 'numeric' },
-      { title: 'Name', field: 'name' },
+      { title: 'First name', field: 'first_name' },
+      { title: 'Last name', field: 'last_name' },
       { title: 'Phone', field: 'num' },
     ],
     data: rows
@@ -42,10 +33,27 @@ export default function SimpleTable(props) {
         onRowAdd: newData =>
           new Promise(resolve => {
             setTimeout(() => {
+              {
+                fetch('http://localhost:9000/testAPI/test', {
+                  method: 'PUT',
+                  body: JSON.stringify({
+                    first_name: newData.first_name,
+                    last_name: newData.last_name,
+                    phone_number: newData.num,
+                  }),
+                  headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                  }
+                }).then(response => {
+                  return response.json()
+                }).then(json => {
+                  console.log(json)
+                })
+                const data = [...state.data];
+                data.push(newData);
+                setState({ ...state, data });
+              }
               resolve();
-              const data = [...state.data];
-              data.push(newData);
-              setState({ ...state, data });
             }, 600);
           }),
         onRowUpdate: (newData, oldData) =>
