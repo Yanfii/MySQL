@@ -5,6 +5,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import EditIcon from '@material-ui/icons/Edit'
+import Link from 'react-router';
 import './Table.css';
 
 
@@ -19,7 +21,7 @@ export default function SimpleTable(props) {
   clients.forEach( (client) =>
     rows.push(createData(client.user_id, client.first_name + " " + client.last_name, client.phone_number))
   )
-  
+
   return (
     <Paper className="root">
       <Table className="table">
@@ -35,7 +37,12 @@ export default function SimpleTable(props) {
           {rows.map(row => (
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">{row.id}</TableCell>
-              <TableCell>{row.name}</TableCell>
+              <TableCell>
+                <Link to="users/{row.id}">
+                  <EditIcon/>
+                </Link>
+                {row.name}
+              </TableCell>
               <TableCell>{row.num}</TableCell>
               <TableCell>View</TableCell>
             </TableRow>
