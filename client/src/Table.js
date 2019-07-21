@@ -18,29 +18,26 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData (id, name, num) {
+  return { id, name, num };
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+var rows = [];
 
 export default function SimpleTable(props) {
   const classes = useStyles();
-  console.log("huh", props.clients)
+  var clients = props.clients
+  clients.forEach( (client) =>
+    rows.push(createData(client.user_id, client.first_name + " " + client.last_name, client.phone_number))
+  )
   
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell>First name</TableCell>
-            <TableCell align="right">Last name</TableCell>
+            <TableCell>User ID</TableCell>
+            <TableCell align="right">Name</TableCell>
             <TableCell align="right">Phone</TableCell>
 
           </TableRow>
@@ -49,10 +46,10 @@ export default function SimpleTable(props) {
           {rows.map(row => (
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">
-                {row.name}
+                {row.id}
               </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
+              <TableCell align="right">{row.name}</TableCell>
+              <TableCell align="right">{row.num}</TableCell>
             </TableRow>
           ))}
         </TableBody>
