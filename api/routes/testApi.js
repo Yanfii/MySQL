@@ -1,16 +1,25 @@
 var express = require('express');
+var fs = require('fs');
 var router = express.Router();
 const mysql = require('mysql')
+
+var shouldPopulateWithInitialData = false;
+var initialData = fs.readFileSync('perfect_party.sql').toString();
 
 const connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
-	password: 'bojana',
-	database: 'cs348'
+	database: 'cs348',
+	multipleStatements: true
 })
 
 connection.connect(function(err) {
 	(err)? console.log(err): console.log(connection);
+	if (shouldPopulateWithInitialData) {
+		connection.query(initialData, function(err, result) {
+	        (err)? console.log('error loading initial data: ', err): console.log(result);
+	  });
+	}
 })
 
 router.get('/', function(req, res, next) {
