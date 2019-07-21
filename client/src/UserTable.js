@@ -8,6 +8,8 @@ import Paper from '@material-ui/core/Paper';
 import EditIcon from '@material-ui/icons/Edit'
 import { Link } from 'react-router-dom';
 import './Table.css';
+import MaterialTable from 'material-table';
+
 
 
 function createData (id, name, num) {
@@ -22,33 +24,49 @@ export default function SimpleTable(props) {
     rows.push(createData(client.user_id, client.first_name + " " + client.last_name, client.phone_number))
   )
 
+  const [state, setState] = React.useState({
+    columns: [
+      { title: 'User ID', field: 'id', type: 'numeric' },
+      { title: 'Name', field: 'name' },
+      { title: 'Phone', field: 'num' },
+    ],
+    data: rows
+  });
+
   return (
-    <Paper className="root">
-      <Table className="table">
-        <TableHead>
-          <TableRow>
-            <TableCell>User ID</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Phone</TableCell>
-            <TableCell>Events</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map(row => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">{row.id}</TableCell>
-              <TableCell>
-                <Link>
-                  <EditIcon/>
-                </Link>
-                {row.name}
-              </TableCell>
-              <TableCell>{row.num}</TableCell>
-              <TableCell>View events</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Paper>
+    <MaterialTable
+      title=""
+      columns={state.columns}
+      data={state.data}
+      editable={{
+        onRowAdd: newData =>
+          new Promise(resolve => {
+            setTimeout(() => {
+              resolve();
+              const data = [...state.data];
+              data.push(newData);
+              setState({ ...state, data });
+            }, 600);
+          }),
+        onRowUpdate: (newData, oldData) =>
+          new Promise(resolve => {
+            setTimeout(() => {
+              resolve();
+              const data = [...state.data];
+              data[data.indexOf(oldData)] = newData;
+              setState({ ...state, data });
+            }, 600);
+          }),
+        onRowDelete: oldData =>
+          new Promise(resolve => {
+            setTimeout(() => {
+              resolve();
+              const data = [...state.data];
+              data.splice(data.indexOf(oldData), 1);
+              setState({ ...state, data });
+            }, 600);
+          }),
+      }}
+    />
   );
 }

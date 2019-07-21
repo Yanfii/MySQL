@@ -2,7 +2,16 @@
     width: '100%';
     margin-top: 20px;
     overflow: 'auto';
+    margin-left: 20px;
+    margin-right: 20px;
 }
 .table {
     min-width: 650px;
   }
+.edit {
+    margin-right: 5px;
+    width: 15px !important;
+    vertical-align: middle;
+    color: gray;
+
+}
