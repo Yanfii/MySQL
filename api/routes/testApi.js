@@ -30,11 +30,21 @@ router.get('/', function(req, res, next) {
 
 router.get('/clients', function(req, res, next) {
 		var queryStr = 'SELECT * FROM client WHERE TRUE';
-		queryStr += (req.query.id) ? 'AND id = ${req.query.id}' : ''
-		queryStr += (req.query.first_name) ? 'AND first_name = ${req.query.first_name}' : ''
-		queryStr += (req.query.last_name) ? 'AND last_name = ${req.query.last_name}' : ''
-		queryStr += (req.query.phone_number) ? 'AND phone_number = ${req.query.phone_number}' : ''
-    connection.query(queryStr, function(err, data) {
+		queryStr += (req.query.id) ? 'AND id = ? ${req.query.id}' : ''
+		var queryPlaceholders = [];
+		if (req.query.first_name) {
+			queryStr += ' AND first_name = ?' : '';
+			queryPlaceholders.append(req.query.first_name);
+		}
+		if (req.query.last_name) {
+			queryStr = 'AND last_name = ?';
+			queryPlaceholders.append(req.query.last_name);
+		}
+		if (req.query.phone_number) {
+			queryStr = 'AND phone_number = ?';
+			queryPlaceholders.append(req.query.phone_number);
+		}
+    connection.query(queryStr, queryPlaceholders, function(err, data) {
         (err)?res.send(err):res.json({clients: data})
     })
 });
