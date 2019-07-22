@@ -23,6 +23,18 @@
   color: #61dafb;
 }
 
+.root {
+  flex-grow: 1,
+}
+
+.menuButton {
+  margin-right: 20px,
+}
+
+.title {
+  flex-grow: 1,
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

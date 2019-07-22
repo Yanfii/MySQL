@@ -9,8 +9,10 @@ var initialData = fs.readFileSync('perfect_party.sql').toString();
 const connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
+ 	password: 'bojana',
 	database: 'cs348',
-	multipleStatements: true
+	multipleStatements: true,
+  insecureAuth: true,
 })
 
 connection.connect(function(err) {
@@ -22,16 +24,19 @@ connection.connect(function(err) {
 	}
 })
 
-router.get('/', function(req, res, next) {
-    connection.query("INSERT INTO client VALUES (4, 'test', 'ZHANG', '11111')", function(err, data) {
+router.put('/test', function(req, res, next) {
+    connection.query(`INSERT INTO client (first_name, last_name, phone_number) VALUES (${req.body.first_name}, ${req.body.last_name}, ${req.body.phone_number})`, function(err, data) {
         (err)?res.send(err): res.json({clients: data})
     })
 });
 
 router.get('/clients', function(req, res, next) {
 		var queryStr = 'SELECT * FROM client WHERE TRUE';
-		queryStr += (req.query.id) ? 'AND id = ? ${req.query.id}' : ''
 		var queryPlaceholders = [];
+		if (req.query.id) {
+			queryStr += 'AND id = ?';
+			queryPlaceholders.append(req.query.id);
+		}
 		if (req.query.first_name) {
 			queryStr += ' AND first_name = ?';
 			queryPlaceholders.append(req.query.first_name);

@@ -1,8 +1,19 @@
 .root {
     width: '100%';
-    margin-top: theme.spacing(3);
+    margin-top: 20px;
     overflow: 'auto';
+    margin-left: 20px;
+    margin-right: 20px;
 }
 .table {
-    minWidth: 650;
+    min-width: 650px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
+.edit {
+    margin-right: 5px;
+    width: 15px !important;
+    vertical-align: middle;
+    color: gray;
+
+}
