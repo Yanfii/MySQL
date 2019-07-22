@@ -54,13 +54,35 @@ router.get('/clients', function(req, res, next) {
     })
 });
 
+// Updates a row of client info
+router.get('/clients/:user_id', function(req, res, next) {
+	var queryStr = 'UPDATE client SET';
+	var queryPlaceholders = [];
+	if (req.query.first_name) {
+		queryStr += 'first_name = ?';
+		queryPlaceholders.append(req.query.first_name);
+	}
+	if (req.query.last_name) {
+		queryStr = 'last_name = ?';
+		queryPlaceholders.append(req.query.last_name);
+	}
+	if (req.query.phone_number) {
+		queryStr = 'phone_number = ?';
+		queryPlaceholders.append(req.query.phone_number);
+	}
+	queryStr += 'WHERE user_id = ?';
+	queryPlaceholders.append(req.query.user_id);
+	connection.query(queryStr, queryPlaceholders, function(err, data) {
+	(err)?res.send(err):res.json({clients: data})
+	})
+});
+
 // Delete a user
 router.delete('/clients/:user_id', function(req, res, next) {
-	console.log("IN HERE", req.params.user_id)
-	const queryStr = 'DELETE FROM client WHERE user_id= ?';
-connection.query(queryStr, [req.params.user_id], function(err, data) {
-	(err)?res.send(err):res.json({clients: data})
-})
+		const queryStr = 'DELETE FROM client WHERE user_id= ?';
+	connection.query(queryStr, [req.params.user_id], function(err, data) {
+		(err)?res.send(err):res.json({clients: data})
+	})
 });
 
 // Get events and cost per each event for a given user
