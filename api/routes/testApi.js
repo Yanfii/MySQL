@@ -54,6 +54,15 @@ router.get('/clients', function(req, res, next) {
     })
 });
 
+// Delete a user
+router.delete('/clients/:user_id', function(req, res, next) {
+	console.log("IN HERE", req.params.user_id)
+	const queryStr = 'DELETE FROM client WHERE user_id= ?';
+connection.query(queryStr, [req.params.user_id], function(err, data) {
+	(err)?res.send(err):res.json({clients: data})
+})
+});
+
 // Get events and cost per each event for a given user
 router.get('/clients/:user_id', function(req, res, next) {
 		const queryStr = 'SELECT event_id,`date`,LOCATION,title,SUM(cost_per_unit*units)FROM`Event` NATURAL JOIN Vendor_Item NATURAL JOIN`Transaction` WHERE user_id= ? GROUP BY event_id,date,LOCATION,title';
