@@ -25,7 +25,11 @@ connection.connect(function(err) {
 })
 
 router.put('/test', function(req, res, next) {
-    connection.query(`INSERT INTO client (first_name, last_name, phone_number) VALUES (${req.body.first_name}, ${req.body.last_name}, ${req.body.phone_number})`, function(err, data) {
+	var queryPlaceholders = [];
+	queryPlaceholders.push(req.body.first_name)
+	queryPlaceholders.push(req.body.last_name)
+	queryPlaceholders.push(req.body.phone_number)
+	connection.query(`INSERT INTO client (first_name, last_name, phone_number) VALUES (?, ?, ?)`, queryPlaceholders, function(err, data) {
         (err)?res.send(err): res.json({clients: data})
     })
 });
