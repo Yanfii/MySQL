@@ -33,7 +33,7 @@ router.get('/clients', function(req, res, next) {
 		queryStr += (req.query.id) ? 'AND id = ? ${req.query.id}' : ''
 		var queryPlaceholders = [];
 		if (req.query.first_name) {
-			queryStr += ' AND first_name = ?' : '';
+			queryStr += ' AND first_name = ?';
 			queryPlaceholders.append(req.query.first_name);
 		}
 		if (req.query.last_name) {
@@ -51,9 +51,8 @@ router.get('/clients', function(req, res, next) {
 
 // Get events and cost per each event for a given user
 router.get('/clients/:user_id', function(req, res, next) {
-		var user_id = req.params.user_id;
-		const queryStr = 'SELECT event_id,`date`,LOCATION,title,SUM(cost_per_unit*units)FROM`Event` NATURAL JOIN Vendor_Item NATURAL JOIN`Transaction` WHERE user_id=${user_id} GROUP BY event_id,date,LOCATION,title'
-    connection.query(queryStr, function(err, data) {
+		const queryStr = 'SELECT event_id,`date`,LOCATION,title,SUM(cost_per_unit*units)FROM`Event` NATURAL JOIN Vendor_Item NATURAL JOIN`Transaction` WHERE user_id= ? GROUP BY event_id,date,LOCATION,title';
+    connection.query(queryStr, [req.params.user_id], function(err, data) {
         (err)?res.send(err):res.json({clients: data})
     })
 });
