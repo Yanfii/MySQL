@@ -40,7 +40,7 @@ export default function SimpleTable(props) {
             setTimeout(() => {
               {
                 fetch('http://localhost:9000/testAPI/test', {
-                  method: 'PUT',
+                  method: 'POST',
                   body: JSON.stringify({
                     first_name: newData.first_name,
                     last_name: newData.last_name,
@@ -50,7 +50,6 @@ export default function SimpleTable(props) {
                     "Content-type": "application/json; charset=UTF-8"
                   }
                 }).then(response => {
-                  console.log("huh", response)
                   return response.json()
                 }).then(json => {
                   NotificationManager.success('Client created successfully!', 'Success');
@@ -66,10 +65,30 @@ export default function SimpleTable(props) {
         onRowUpdate: (newData, oldData) =>
           new Promise(resolve => {
             setTimeout(() => {
+              {
+                let data = [...state.data];
+                const index = data.indexOf(oldData);
+                data[index] = newData;
+                setState({ ...state, data });
+
+                fetch(`http://localhost:9000/testAPI/clients/${oldData.id}`, {
+                  method: 'PUT',
+                  body: JSON.stringify({
+                    user_id: newData.id,
+                    first_name: newData.first_name,
+                    last_name: newData.last_name,
+                    phone_number: newData.num,
+                  }),
+                  headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                  }
+                }).then(response => {
+                  return response.json()
+                }).then(json => {
+                  NotificationManager.success('Client updated successfully!', 'Success');
+                })
+              }
               resolve();
-              const data = [...state.data];
-              data[data.indexOf(oldData)] = newData;
-              setState({ ...state, data });
             }, 600);
           }),
         onRowDelete: oldData =>
@@ -87,7 +106,6 @@ export default function SimpleTable(props) {
                 }).then(json => {
                   NotificationManager.success('Client deleted successfully!', 'Success');
                 })
-
               }
               resolve();
             }, 600);
