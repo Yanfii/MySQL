@@ -83,6 +83,12 @@ router.delete('/clients/:user_id', function(req, res, next) {
 	connection.query(queryStr, [req.params.user_id], function(err, data) {
 		(err)?res.send(err):res.json({clients: data})
 	})
+
+router.get('/events', function(req, res, next) {
+		var queryStr = 'SELECT * FROM event';
+    connection.query(queryStr, function(err, data) {
+        (err)?res.send(err):res.json({clients: data})
+    })
 });
 
 // Get events and cost per each event for a given user
