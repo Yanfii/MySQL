@@ -9,17 +9,13 @@ function createData (id, first_name, last_name, num) {
 }
 
 var rows = [];
-var pushed = false
 
 export default function SimpleTable(props) {
   var clients = props.clients
   clients.forEach( (client) => {
-    // if (pushed === false) {
       rows.push(createData(client.user_id, client.first_name, client.last_name, client.phone_number))}
-    // }
   )
   
-  pushed = true
 
   const [state, setState] = React.useState({
     columns: [
@@ -81,16 +77,12 @@ export default function SimpleTable(props) {
             setTimeout(() => {
               {
                 let data = [...state.data];
-                console.log("initially", data)
-                console.log("old data", oldData)
                 const index = data.indexOf(oldData);
                 data.splice(index, 1);
-                console.log("huh", data)
-                setState({ data: data })
-                fetch(`http://localhost:9000/testAPI/clients/${index + 1}`, {
+                setState({ ...state, data });
+                fetch(`http://localhost:9000/testAPI/clients/${oldData.id}`, {
                   method: 'DELETE'
                 }).then(response => {
-                  console.log("huh", response)
                   return response.json()
                 }).then(json => {
                   NotificationManager.success('Client deleted successfully!', 'Success');
