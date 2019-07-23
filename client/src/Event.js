@@ -17,8 +17,6 @@ class Event extends Component {
       .then(res => {
         this.setState({ events: JSON.parse(res)["events"] })
       });
-    console.log("HERE ARE THE PARSED EVENTS!");
-    console.log(this.state.events);
   }
 
   componentDidMount() {

@@ -30,9 +30,10 @@ router.post('/test', function(req, res, next) {
     queryPlaceholders.push(req.body.first_name)
     queryPlaceholders.push(req.body.last_name)
     queryPlaceholders.push(req.body.phone_number)
-    connection.query(`INSERT INTO client (first_name, last_name, phone_number) VALUES (?, ?, ?)`, queryPlaceholders, function(err, data) {
+    var query = connection.query(`INSERT INTO client (first_name, last_name, phone_number) VALUES (?, ?, ?)`, queryPlaceholders, function(err, data) {
               (err)?res.send(err): res.json({clients: data})
-          })
+		  })
+	console.log(query.sql)
 });
 
 // Insert an event
@@ -42,9 +43,10 @@ router.post('/insert_event', function(req, res, next) {
     queryPlaceholders.push(req.body.location)
     queryPlaceholders.push(req.body.user_id)
 	queryPlaceholders.push(req.body.title)
-    connection.query(`INSERT INTO event (date, location, user_id, title) VALUES (?, ?, ?, ?)`, queryPlaceholders, function(err, data) {
+    var query = connection.query(`INSERT INTO event (date, location, user_id, title) VALUES (?, ?, ?, ?)`, queryPlaceholders, function(err, data) {
               (err)?res.send(err): res.json({clients: data})
-          })
+		  })
+	console.log(query.sql)
 });
 
 router.get('/clients', function(req, res, next) {
@@ -66,9 +68,10 @@ router.get('/clients', function(req, res, next) {
 			queryStr += 'AND phone_number = ?';
 			queryPlaceholders.push(req.query.phone_number);
 		}
-    connection.query(queryStr, queryPlaceholders, function(err, data) {
+    var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
         (err)?res.send(err):res.json({clients: data})
-    })
+	})
+	console.log(query.sql)
 });
 
 // Updates a row of client info
@@ -98,16 +101,19 @@ router.put('/clients/:user_id', function(req, res, next) {
 // Delete a user
 router.delete('/clients/:user_id', function(req, res, next) {
 	const queryStr = 'DELETE FROM client WHERE user_id= ?';
-	connection.query(queryStr, [req.params.user_id], function(err, data) {
+	var query = connection.query(queryStr, [req.params.user_id], function(err, data) {
 		(err)?res.send(err):res.json({clients: data})
-	})});
+	})
+	console.log(query.sql)
+});
 
 // Get all events
 router.get('/events', function(req, res, next) {
 		var queryStr = 'SELECT * FROM Event';
-    connection.query(queryStr, function(err, data) {
+    var query = connection.query(queryStr, function(err, data) {
         (err)?res.send(err):res.json({events: data})
-    })
+	})
+	console.log(query.sql)
 });
 
 // Updates a row of event info
@@ -123,7 +129,6 @@ router.put('/events/:event_id', function(req, res, next) {
     queryPlaceholders.push(req.body.location);
   }
   if (req.body.date) {
-	  console.log("huh", req.body.date)
     queryStr += 'date = ? ';
     queryPlaceholders.push(req.body.date.substring(0, 10));
   }
@@ -139,13 +144,14 @@ router.put('/events/:event_id', function(req, res, next) {
 // Delete an event
 router.delete('/events/:event_id', function(req, res, next) {
 		const queryStr = 'DELETE FROM Event WHERE event_id= ?';
-	connection.query(queryStr, [req.params.event_id], function(err, data) {
+	var query = connection.query(queryStr, [req.params.event_id], function(err, data) {
 		(err)?res.send(err):res.json({events: data})
-	})});
+	})
+	console.log(query.sql)
+});
 
 // Get events and cost per each event for a given user
 router.get('/clients/:user_id', function(req, res, next) {
-	console.log("MEMEESSSSSS");
 	const queryStr = 'SELECT event_id,`date`,LOCATION,title,SUM(cost_per_unit*units)FROM`Event` NATURAL JOIN Vendor_Item NATURAL JOIN`Transaction` WHERE user_id= ? GROUP BY event_id,date,LOCATION,title';
     var query = connection.query(queryStr, [req.params.user_id], function(err, data) {
         (err)?res.send(err):res.json({clients: data})

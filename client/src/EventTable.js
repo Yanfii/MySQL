@@ -27,9 +27,6 @@ export default function EventTable(props) {
     tmp_row.push(createData(event.event_id, event.date, event.location, event.user_id, event.title))
   )
   rows = tmp_row;
-  console.log("HERE ARE THE ROWS!")
-  console.log(rows);
-
   const [state, setState] = React.useState({
     columns: [
       { title: 'Event ID', field: 'event_id', type: 'numeric', editable: 'never' },
@@ -66,7 +63,6 @@ export default function EventTable(props) {
                     "Content-type": "application/json; charset=UTF-8"
                   }
                 }).then(response => {
-                  console.log("huh", response)
                   return response.json()
                 }).then(json => {
                   NotificationManager.success('Event created successfully!', 'Success');
@@ -110,14 +106,24 @@ export default function EventTable(props) {
             }, 600);
           }),
         onRowDelete: oldData =>
-          new Promise(resolve => {
-            setTimeout(() => {
-              resolve();
-              const data = [...state.data];
-              data.splice(data.indexOf(oldData), 1);
+        new Promise(resolve => {
+          setTimeout(() => {
+            {
+              let data = [...state.data];
+              const index = data.indexOf(oldData);
+              data.splice(index, 1);
               setState({ ...state, data });
-            }, 600);
-          }),
+              fetch(`http://localhost:9000/testAPI/events/${oldData.event_id}`, {
+                method: 'DELETE'
+              }).then(response => {
+                return response.json()
+              }).then(json => {
+                NotificationManager.success('Event deleted successfully!', 'Success');
+              })
+            }
+            resolve();
+          }, 600);
+        }),
       }}
     />
   </div>

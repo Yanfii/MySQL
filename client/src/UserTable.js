@@ -52,7 +52,6 @@ export default function SimpleTable(props) {
                   fetch(`http://localhost:9000/testAPI/clients/${rowData.id}`)
 									.then(res => res.text())
                   .then(response => {
-										 console.log(response);
 									   var parsed_res = JSON.parse(response)['clients'];
 										 var res_str = "";
 									   if (parsed_res.length === 0) {
@@ -60,7 +59,6 @@ export default function SimpleTable(props) {
 						         } else {
                        res_str = "The purchases for this user total " + parsed_res[0]["SUM(cost_per_unit*units)"].toString();
 										 }
-										 console.log(parsed_res);
 										 setState({ ...state, visible: true, res_str: res_str}); })
                 }
                 resolve();
@@ -134,7 +132,7 @@ export default function SimpleTable(props) {
                 const index = data.indexOf(oldData);
                 data.splice(index, 1);
                 setState({ ...state, data });
-                fetch(`http://localhost:9000/testAPI/clients/${oldData.event_id}`, {
+                fetch(`http://localhost:9000/testAPI/clients/${oldData.id}`, {
                   method: 'DELETE'
                 }).then(response => {
                   return response.json()
