@@ -9,7 +9,7 @@ var initialData = fs.readFileSync('perfect_party.sql').toString();
 const connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
- 	password: '123456789',
+ 	password: 'bojana',
 	database: 'cs348',
 	multipleStatements: true,
   insecureAuth: true,
@@ -26,7 +26,6 @@ connection.connect(function(err) {
 
 // Insert a client
 router.post('/test', function(req, res, next) {
-  console.log("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE AIDS");
     var queryPlaceholders = [];
     queryPlaceholders.push(req.body.first_name)
     queryPlaceholders.push(req.body.last_name)
@@ -38,13 +37,12 @@ router.post('/test', function(req, res, next) {
 
 // Insert an event
 router.post('/insert_event', function(req, res, next) {
-  console.log("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE AIDS");
     var queryPlaceholders = [];
     queryPlaceholders.push(req.body.date)
     queryPlaceholders.push(req.body.location)
     queryPlaceholders.push(req.body.user_id)
-    queryPlaceholders.push(req.body.title)
-    connection.query(`INSERT INTO Event (date, location, user_id, title) VALUES (?, ?, ?, ?)`, queryPlaceholders, function(err, data) {
+	queryPlaceholders.push(req.body.title)
+    connection.query(`INSERT INTO event (date, location, user_id, title) VALUES (?, ?, ?, ?)`, queryPlaceholders, function(err, data) {
               (err)?res.send(err): res.json({clients: data})
           })
 });
