@@ -3,14 +3,17 @@ import './Table.css';
 import MaterialTable from 'material-table';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+import { Modal } from 'antd';
 
 function createData (id, first_name, last_name, num) {
   return { id, first_name, last_name, num };
 }
 
 var rows = [];
-
 export default function SimpleTable(props) {
+	function handleOk() {
+		setState({...state, visible: false})
+	}
   var clients = props.clients
   var tmp_rows = [];
   clients.forEach( (client) => {
@@ -20,6 +23,8 @@ export default function SimpleTable(props) {
 
 
   const [state, setState] = React.useState({
+		visible: false,
+	  res_str: "",
     columns: [
       { title: 'User ID', field: 'id', editable: 'never'},
       { title: 'First name', field: 'first_name' },
@@ -41,7 +46,26 @@ export default function SimpleTable(props) {
           icon: 'contacts',
           tooltip: 'View Details',
           onClick: (event, rowData) => {
-            console.log("GET CLICKED FAM!")
+            new Promise(resolve => {
+              setTimeout(() => {
+                {
+                  fetch(`http://localhost:9000/testAPI/clients/${rowData.id}`)
+									.then(res => res.text())
+                  .then(response => {
+										 console.log(response);
+									   var parsed_res = JSON.parse(response)['clients'];
+										 var res_str = "";
+									   if (parsed_res.length === 0) {
+										   res_str = "There are no purchases for this user";
+						         } else {
+                       res_str = "The purchases for this user total " + parsed_res[0]["SUM(cost_per_unit*units)"].toString();
+										 }
+										 console.log(parsed_res);
+										 setState({ ...state, visible: true, res_str: res_str}); })
+                }
+                resolve();
+              }, 600);
+            });
           }
         }
       ]}
@@ -123,6 +147,16 @@ export default function SimpleTable(props) {
           }),
       }}
     />
+		<Modal
+			title="User Details"
+			visible={state.visible}
+			onOk={handleOk}
+			onCancel={handleOk}
+		>
+			<p>{state.res_str}</p>
+		</Modal>
+
+
     </div>
 
   );
