@@ -61,7 +61,6 @@ export default function SimpleTable(props) {
                     "Content-type": "application/json; charset=UTF-8"
                   }
                 }).then(response => {
-                  console.log("huh", response)
                   return response.json()
                 }).then(json => {
                   NotificationManager.success('Client created successfully!', 'Success');
@@ -118,7 +117,6 @@ export default function SimpleTable(props) {
                 }).then(json => {
                   NotificationManager.success('Client deleted successfully!', 'Success');
                 })
-
               }
               resolve();
             }, 600);
