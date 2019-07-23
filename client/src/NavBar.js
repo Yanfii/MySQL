@@ -12,9 +12,12 @@ import Event from './Event';
 import { Menu, Icon } from 'antd';
 const { SubMenu } = Menu;
 
+let indicator = window.location.href.length > 22
+
 class NavBar extends Component {
+    
 	state = {
-		current: 'mail',
+		current: indicator? 'app': 'mail'
 	}
 
 	handleClick = e => {

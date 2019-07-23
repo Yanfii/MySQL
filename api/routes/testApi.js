@@ -112,7 +112,7 @@ router.get('/events', function(req, res, next) {
 
 // Updates a row of event info
 router.put('/events/:event_id', function(req, res, next) {
-  var queryStr = 'UPDATE Event SET ';
+  var queryStr = 'UPDATE event SET ';
   var queryPlaceholders = [];
   if (req.body.title) {
     queryStr += 'title = ?, ';
@@ -123,8 +123,9 @@ router.put('/events/:event_id', function(req, res, next) {
     queryPlaceholders.push(req.body.location);
   }
   if (req.body.date) {
+	  console.log("huh", req.body.date)
     queryStr += 'date = ? ';
-    queryPlaceholders.push(req.body.date);
+    queryPlaceholders.push(req.body.date.substring(0, 10));
   }
   queryStr += 'WHERE event_id = ?';
   queryPlaceholders.push(req.body.event_id);
