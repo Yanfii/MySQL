@@ -12,10 +12,12 @@ var rows = [];
 
 export default function SimpleTable(props) {
   var clients = props.clients
+  var tmp_rows = [];
   clients.forEach( (client) => {
-      rows.push(createData(client.user_id, client.first_name, client.last_name, client.phone_number))}
+      tmp_rows.push(createData(client.user_id, client.first_name, client.last_name, client.phone_number))}
   )
-  
+  rows = tmp_rows;
+
 
   const [state, setState] = React.useState({
     columns: [
@@ -34,13 +36,22 @@ export default function SimpleTable(props) {
       title=""
       columns={state.columns}
       data={state.data}
+      actions = {[
+        {
+          icon: 'contacts',
+          tooltip: 'View Details',
+          onClick: (event, rowData) => {
+            console.log("GET CLICKED FAM!")
+          }
+        }
+      ]}
       editable={{
         onRowAdd: newData =>
           new Promise(resolve => {
             setTimeout(() => {
               {
                 fetch('http://localhost:9000/testAPI/test', {
-                  method: 'PUT',
+                  method: 'POST',
                   body: JSON.stringify({
                     first_name: newData.first_name,
                     last_name: newData.last_name,
@@ -63,13 +74,33 @@ export default function SimpleTable(props) {
               resolve();
             }, 600);
           }),
-        onRowUpdate: (newData, oldData) =>
+				onRowUpdate: (newData, oldData) =>
           new Promise(resolve => {
             setTimeout(() => {
+              {
+                let data = [...state.data];
+                const index = data.indexOf(oldData);
+                data[index] = newData;
+                setState({ ...state, data });
+
+                fetch(`http://localhost:9000/testAPI/clients/${oldData.id}`, {
+                  method: 'PUT',
+                  body: JSON.stringify({
+                    user_id: newData.id,
+                    first_name: newData.first_name,
+                    last_name: newData.last_name,
+                    phone_number: newData.num,
+                  }),
+                  headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                  }
+                }).then(response => {
+                  return response.json()
+                }).then(json => {
+                  NotificationManager.success('Client updated successfully!', 'Success');
+                })
+              }
               resolve();
-              const data = [...state.data];
-              data[data.indexOf(oldData)] = newData;
-              setState({ ...state, data });
             }, 600);
           }),
         onRowDelete: oldData =>
@@ -80,7 +111,7 @@ export default function SimpleTable(props) {
                 const index = data.indexOf(oldData);
                 data.splice(index, 1);
                 setState({ ...state, data });
-                fetch(`http://localhost:9000/testAPI/clients/${oldData.id}`, {
+                fetch(`http://localhost:9000/testAPI/clients/${oldData.event_id}`, {
                   method: 'DELETE'
                 }).then(response => {
                   return response.json()
@@ -95,6 +126,6 @@ export default function SimpleTable(props) {
       }}
     />
     </div>
-    
+
   );
 }

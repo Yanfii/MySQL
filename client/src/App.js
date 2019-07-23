@@ -22,11 +22,12 @@ class App extends Component {
       });
   }
 
-  componentWillMount = () => {
+  componentDidMount() {
     this.fetchClients()
   }
 
   render() {
+    if (this.state.clients.length === 0) return <div></div>;
     return (
       <div className="App">
           <MyTable clients={this.state.clients}/>
