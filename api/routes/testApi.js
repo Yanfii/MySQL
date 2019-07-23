@@ -9,7 +9,7 @@ var initialData = fs.readFileSync('perfect_party.sql').toString();
 const connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
- 	password: 'bojana',
+ 	password: '123456789',
 	database: 'cs348',
 	multipleStatements: true,
   insecureAuth: true,
@@ -24,10 +24,29 @@ connection.connect(function(err) {
 	}
 })
 
-router.put('/test', function(req, res, next) {
-    connection.query(`INSERT INTO client (first_name, last_name, phone_number) VALUES (${req.body.first_name}, ${req.body.last_name}, ${req.body.phone_number})`, function(err, data) {
-        (err)?res.send(err): res.json({clients: data})
-    })
+// Insert a client
+router.post('/test', function(req, res, next) {
+  console.log("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE AIDS");
+    var queryPlaceholders = [];
+    queryPlaceholders.push(req.body.first_name)
+    queryPlaceholders.push(req.body.last_name)
+    queryPlaceholders.push(req.body.phone_number)
+    connection.query(`INSERT INTO client (first_name, last_name, phone_number) VALUES (?, ?, ?)`, queryPlaceholders, function(err, data) {
+              (err)?res.send(err): res.json({clients: data})
+          })
+});
+
+// Insert an event
+router.post('/insert_event', function(req, res, next) {
+  console.log("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE AIDS");
+    var queryPlaceholders = [];
+    queryPlaceholders.push(req.body.date)
+    queryPlaceholders.push(req.body.location)
+    queryPlaceholders.push(req.body.user_id)
+    queryPlaceholders.push(req.body.title)
+    connection.query(`INSERT INTO Event (date, location, user_id, title) VALUES (?, ?, ?, ?)`, queryPlaceholders, function(err, data) {
+              (err)?res.send(err): res.json({clients: data})
+          })
 });
 
 router.get('/clients', function(req, res, next) {
@@ -55,26 +74,27 @@ router.get('/clients', function(req, res, next) {
 });
 
 // Updates a row of client info
-router.get('/clients/:user_id', function(req, res, next) {
-	var queryStr = 'UPDATE client SET';
-	var queryPlaceholders = [];
-	if (req.query.first_name) {
-		queryStr += 'first_name = ?';
-		queryPlaceholders.append(req.query.first_name);
-	}
-	if (req.query.last_name) {
-		queryStr = 'last_name = ?';
-		queryPlaceholders.append(req.query.last_name);
-	}
-	if (req.query.phone_number) {
-		queryStr = 'phone_number = ?';
-		queryPlaceholders.append(req.query.phone_number);
-	}
-	queryStr += 'WHERE user_id = ?';
-	queryPlaceholders.append(req.query.user_id);
-	connection.query(queryStr, queryPlaceholders, function(err, data) {
-	(err)?res.send(err):res.json({clients: data})
-	})
+router.put('/clients/:user_id', function(req, res, next) {
+  var queryStr = 'UPDATE client SET ';
+  var queryPlaceholders = [];
+  if (req.body.first_name) {
+    queryStr += 'first_name = ?, ';
+    queryPlaceholders.push(req.body.first_name);
+  }
+  if (req.body.last_name) {
+    queryStr += 'last_name = ?, ';
+    queryPlaceholders.push(req.body.last_name);
+  }
+  if (req.body.phone_number) {
+    queryStr += 'phone_number = ? ';
+    queryPlaceholders.push(req.body.phone_number);
+  }
+  queryStr += 'WHERE user_id = ?';
+  queryPlaceholders.push(req.body.user_id);
+  var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
+    (err)?res.send(err):res.json({clients: data})
+  })
+  console.log(query.sql)
 });
 
 // Delete a user
@@ -82,14 +102,47 @@ router.delete('/clients/:user_id', function(req, res, next) {
 		const queryStr = 'DELETE FROM client WHERE user_id= ?';
 	connection.query(queryStr, [req.params.user_id], function(err, data) {
 		(err)?res.send(err):res.json({clients: data})
-	})
+	})});
 
+// Get all events
 router.get('/events', function(req, res, next) {
-		var queryStr = 'SELECT * FROM event';
+		var queryStr = 'SELECT * FROM Event';
     connection.query(queryStr, function(err, data) {
-        (err)?res.send(err):res.json({clients: data})
+        (err)?res.send(err):res.json({events: data})
     })
 });
+
+// Updates a row of event info
+router.put('/events/:event_id', function(req, res, next) {
+  var queryStr = 'UPDATE Event SET ';
+  var queryPlaceholders = [];
+  if (req.body.title) {
+    queryStr += 'title = ?, ';
+    queryPlaceholders.push(req.body.title);
+  }
+  if (req.body.location) {
+    queryStr += 'location = ?, ';
+    queryPlaceholders.push(req.body.location);
+  }
+  if (req.body.date) {
+    queryStr += 'date = ? ';
+    queryPlaceholders.push(req.body.date);
+  }
+  queryStr += 'WHERE event_id = ?';
+  queryPlaceholders.push(req.body.event_id);
+  var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
+    (err)?res.send(err):res.json({events: data})
+  })
+  console.log(query.sql)
+});
+
+
+// Delete an event
+router.delete('/events/:event_id', function(req, res, next) {
+		const queryStr = 'DELETE FROM Event WHERE event_id= ?';
+	connection.query(queryStr, [req.params.event_id], function(err, data) {
+		(err)?res.send(err):res.json({events: data})
+	})});
 
 // Get events and cost per each event for a given user
 router.get('/clients/:user_id', function(req, res, next) {
