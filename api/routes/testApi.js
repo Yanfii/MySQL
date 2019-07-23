@@ -144,10 +144,12 @@ router.delete('/events/:event_id', function(req, res, next) {
 
 // Get events and cost per each event for a given user
 router.get('/clients/:user_id', function(req, res, next) {
+	console.log("MEMEESSSSSS");
 	const queryStr = 'SELECT event_id,`date`,LOCATION,title,SUM(cost_per_unit*units)FROM`Event` NATURAL JOIN Vendor_Item NATURAL JOIN`Transaction` WHERE user_id= ? GROUP BY event_id,date,LOCATION,title';
-    connection.query(queryStr, [req.params.user_id], function(err, data) {
+    var query = connection.query(queryStr, [req.params.user_id], function(err, data) {
         (err)?res.send(err):res.json({clients: data})
     })
+	console.log(query.sql);
 });
 
 module.exports = router;
