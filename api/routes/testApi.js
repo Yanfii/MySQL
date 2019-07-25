@@ -74,6 +74,60 @@ router.get('/clients', function(req, res, next) {
 	console.log(query.sql)
 });
 
+router.get('/transactions', function(req, res, next) {
+		var queryStr = 'SELECT * FROM transaction WHERE TRUE ';
+		var queryPlaceholders = [];
+		if (req.query.transaction_id) {
+			queryStr += 'AND transaction_id = ?, ';
+			queryPlaceholders.push(req.query.transaction_id);
+		}
+		if (req.query.transaction_date) {
+			queryStr += ' AND transaction_date = ?, ';
+			queryPlaceholders.push(req.query.transaction_date);
+		}
+		if (req.query.card_num) {
+			queryStr += 'AND card_num = ?, ';
+			queryPlaceholders.push(req.query.card_num);
+		}
+		if (req.query.event_id) {
+			queryStr += 'AND event_id = ?';
+			queryPlaceholders.push(req.query.event_id);
+		}
+		if (req.query.units_purchased) {
+			queryStr += 'AND units_purchased = ?';
+			queryPlaceholders.push(req.query.units_purchased);
+		}
+    var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
+        (err)?res.send(err):res.json({transactions: data})
+	})
+	console.log(query.sql)
+});
+
+router.get('/suppliers', function(req, res, next) {
+		var queryStr = 'SELECT * FROM supplier WHERE TRUE ';
+		var queryPlaceholders = [];
+		if (req.query.supplier_id) {
+			queryStr += 'AND supplier_id = ?, ';
+			queryPlaceholders.push(req.query.supplier_id);
+		}
+		if (req.query.name) {
+			queryStr += 'AND name = ?, ';
+			queryPlaceholders.push(req.query.name);
+		}
+		if (req.query.contact_info) {
+			queryStr += ' AND contact_info = ?, ';
+			queryPlaceholders.push(req.query.contact_info);
+		}
+		if (req.query.type) {
+			queryStr += 'AND type = ?, ';
+			queryPlaceholders.push(req.query.type);
+		}
+    var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
+        (err)?res.send(err):res.json({suppliers: data})
+	})
+	console.log(query.sql)
+});
+
 // Updates a row of client info
 router.put('/clients/:user_id', function(req, res, next) {
   var queryStr = 'UPDATE client SET ';
@@ -152,7 +206,7 @@ router.delete('/events/:event_id', function(req, res, next) {
 
 // Get events and cost per each event for a given user
 router.get('/clients/:user_id', function(req, res, next) {
-	const queryStr = 'SELECT event_id,`date`,LOCATION,title,SUM(cost_per_unit*units)FROM`Event` NATURAL JOIN Vendor_Item NATURAL JOIN`Transaction` WHERE user_id= ? GROUP BY event_id,date,LOCATION,title';
+	const queryStr = 'SELECT event_id,`event_date`,LOCATION,title,SUM(units_purchased*cost_per_unit)FROM`Event` NATURAL JOIN Vendor_Item NATURAL JOIN`Transaction` NATURAL JOIN Transacted_Items WHERE user_id=? GROUP BY event_id,event_date,LOCATION,title'
     var query = connection.query(queryStr, [req.params.user_id], function(err, data) {
         (err)?res.send(err):res.json({clients: data})
     })
