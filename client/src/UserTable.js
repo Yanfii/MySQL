@@ -57,7 +57,8 @@ export default function SimpleTable(props) {
 									   if (parsed_res.length === 0) {
 										   res_str = "There are no purchases for this user";
 						         } else {
-                       res_str = "The purchases for this user total " + parsed_res[0]["SUM(cost_per_unit*units)"].toString();
+                       console.log(parsed_res[0]);
+                       res_str = "The purchases for this user total $" + parsed_res[0]["SUM(units_purchased*cost_per_unit)"].toString();
 										 }
 										 setState({ ...state, visible: true, res_str: res_str}); })
                 }
