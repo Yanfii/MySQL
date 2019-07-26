@@ -112,6 +112,31 @@ router.get('/transactions/:user_id', function(req, res, next) {
 	})
 });
 
+// Get transactions for a given user by joining on event
+router.get('/decor/:event_id', function(req, res, next) {
+	const queryStr = 'SELECT transaction_date, v.item_id, name_description, units_purchased, cost_per_unit, rating, transport_details, decor_type FROM`Transaction` AS t JOIN Transacted_Items AS dict ON t.transaction_id=dict.item_id JOIN Vendor_Item AS v ON dict.item_id=v.item_id JOIN Decor AS d ON d.item_id=dict.item_id WHERE t.event_id=?;';
+	const queryPlaceholders = [req.params.event_id];
+	var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
+			(err)?res.send(err):res.json({decor_items: data});
+		})
+});
+
+router.get('/menu/:event_id', function(req, res, next) {
+	const queryStr = 'SELECT transaction_date,v.item_id,name_description,units_purchased,cost_per_unit,rating,food_care_instruction,dietary_restriction FROM`Transaction` AS t JOIN Transacted_Items AS dict ON t.transaction_id=dict.item_id JOIN Vendor_Item AS v ON dict.item_id=v.item_id JOIN Menu_Item AS m ON m.item_id=dict.item_id WHERE t.event_id=?;';
+	const queryPlaceholders = [req.params.event_id];
+	var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
+			(err)?res.send(err):res.json({menu_items: data});
+		})
+});
+
+router.get('/entertainment/:event_id', function(req, res, next) {
+	const queryStr = 'SELECT transaction_date,v.item_id,name_description,units_purchased,cost_per_unit,rating,entertainment_type FROM`Transaction` AS t JOIN Transacted_Items AS dict ON t.transaction_id=dict.item_id JOIN Vendor_Item AS v ON dict.item_id=v.item_id JOIN Entertainment ON Entertainment.item_id=dict.item_id WHERE t.event_id=?;';
+	const queryPlaceholders = [req.params.event_id];
+	var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
+			(err)?res.send(err):res.json({entertainment: data});
+		})
+});
+
 router.get('/suppliers', function(req, res, next) {
 		var queryStr = 'SELECT * FROM supplier WHERE TRUE ';
 		var queryPlaceholders = [];
