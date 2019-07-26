@@ -103,6 +103,15 @@ router.get('/transactions', function(req, res, next) {
 	console.log(query.sql)
 });
 
+// Get transactions for a given user by joining on event
+router.get('/transactions/:user_id', function(req, res, next) {
+	const queryStr = 'SELECT * From Transaction natural join Event where user_id = ?';
+ 	const queryPlaceholders = [req.params.user_id];
+	var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
+			(err)?res.send(err):res.json({transactions: data});
+	})
+});
+
 router.get('/suppliers', function(req, res, next) {
 		var queryStr = 'SELECT * FROM supplier WHERE TRUE ';
 		var queryPlaceholders = [];
@@ -123,7 +132,7 @@ router.get('/suppliers', function(req, res, next) {
 			queryPlaceholders.push(req.query.type);
 		}
     var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
-        (err)?res.send(err):res.json({suppliers: data})
+        (err)?res.send(err):res.json({suppliers: data});
 	})
 	console.log(query.sql)
 });
