@@ -103,6 +103,19 @@ router.get('/transactions', function(req, res, next) {
 	console.log(query.sql)
 });
 
+// Insert a transaction
+router.post('/insert_transaction', function(req, res, next) {
+    var queryPlaceholders = [];
+    queryPlaceholders.push(req.body.transaction_date);
+    queryPlaceholders.push(req.body.card_num);
+    queryPlaceholders.push(req.body.event_id);
+		queryPlaceholders.push(req.body.units_purchased);
+    var query = connection.query('INSERT INTO `Transaction` (transaction_date, card_num, event_id, units_purchased) VALUES (?, ?, ?, ?)', queryPlaceholders, function(err, data) {
+              (err)?res.send(err): res.json({transactions: data});
+		  })
+	console.log(query.sql);
+});
+
 // Get transactions for a given user by joining on event
 router.get('/transactions/:user_id', function(req, res, next) {
 	const queryStr = 'SELECT * From Transaction natural join Event where user_id = ?';
@@ -111,6 +124,32 @@ router.get('/transactions/:user_id', function(req, res, next) {
 			(err)?res.send(err):res.json({transactions: data});
 	})
 });
+
+// Insert a vendor item transaction link
+router.post('/insert_item_for_transaction', function(req, res, next) {
+    var queryPlaceholders = [];
+    queryPlaceholders.push(req.body.item_id);
+    queryPlaceholders.push(req.body.transaction_id);
+    var query = connection.query('INSERT INTO `Transacted_Items` (item_id, transaction_id) VALUES (?, ?)', queryPlaceholders, function(err, data) {
+              (err)?res.send(err): res.json({Transacted_Items: data});
+		  })
+	console.log(query.sql);
+});
+
+// Insert a vendor item
+router.post('/insert_vendor_item', function(req, res, next) {
+    var queryPlaceholders = [];
+    queryPlaceholders.push(req.body.item_id);
+    queryPlaceholders.push(req.body.supplier_id);
+    queryPlaceholders.push(req.body.name_description);
+		queryPlaceholders.push(req.body.cost_per_unit);
+		queryPlaceholders.push(req.body.rating);
+    var query = connection.query('INSERT INTO `Vendor_Item` (item_id, supplier_id, name_description, cost_per_unit, rating) VALUES (?, ?, ?, ?, ?)', queryPlaceholders, function(err, data) {
+              (err)?res.send(err): res.json({vendor_items: data});
+		  })
+	console.log(query.sql);
+});
+
 
 // Get transactions for a given user by joining on event
 router.get('/decor/:event_id', function(req, res, next) {
