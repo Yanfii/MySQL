@@ -50,15 +50,18 @@ export default function SimpleTable(props) {
               setTimeout(() => {
                 {
                   fetch(`http://localhost:9000/testAPI/clients/${rowData.id}`)
-									.then(res => res.text())
+									.then(response => response.text())
                   .then(response => {
+                    console.log(response);
 									   var parsed_res = JSON.parse(response)['clients'];
 										 var res_str = "";
 									   if (parsed_res.length === 0) {
 										   res_str = "There are no purchases for this user";
 						         } else {
+                       for (var i = 0; i < parsed_res.length; ++i) {
+                         res_str += "The purchases for the event " + parsed_res[i]["title"] + " is  $" + parsed_res[i]["SUM(units_purchased*cost_per_unit)"].toString() + ". ";
+                       }
                        console.log(parsed_res[0]);
-                       res_str = "The purchases for this user total $" + parsed_res[0]["SUM(units_purchased*cost_per_unit)"].toString();
 										 }
 										 setState({ ...state, visible: true, res_str: res_str}); })
                 }

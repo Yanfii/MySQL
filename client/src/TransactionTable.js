@@ -10,37 +10,46 @@ import { Link } from 'react-router-dom';
 import './Table.css';
 import MaterialTable from 'material-table';
 import { Modal } from 'antd';
-import TransactionTable from './TransactionTable';
 
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 
 
-function createData (event_id, date, location, user_id, title) {
-  return { event_id, date, location, user_id, title }
+function createData (item_id, date, units_purchased, name_description, cost_per_unit, rating, transportation_details, decor_type) {
+  return {item_id, date, units_purchased, name_description, cost_per_unit, rating, transportation_details, decor_type};
 }
 
 
 var rows = [];
-export default function EventTable(props) {
+export default function TransactionTable(props) {
 
 	function handleOk() {
 		setState({...state, visible: false})
 	}
+  console.log(props);
   var tmp_row = []
   var events = props.events;
-  events.forEach( (event) =>
-    tmp_row.push(createData(event.event_id, event.date, event.location, event.user_id, event.title))
+
+  console.log("HERE ARE THE EVENT PROPS!");
+  console.log(props.events);
+
+  events.forEach( (trans) =>
+    tmp_row.push(createData(trans.item_id, trans.date, trans.units_purchased, trans.name_description, trans.cost_per_unit, trans.rating, trans.transportation_details, trans.decor_type))
   )
   rows = tmp_row;
+  console.log("HERE ARE THE ROWS!");
+  console.log(rows);
   const [state, setState] = React.useState({
     decor_items: [],
     columns: [
-      { title: 'Event ID', field: 'event_id', type: 'numeric', editable: 'never' },
-      { title: 'Date', field: 'date' },
-      { title: 'Location', field: 'location' },
-      { title: 'User ID', field: 'user_id', type: 'numeric' },
-      { title: 'Title', field: 'title' },
+      { title: 'Item ID', field: 'item_id', editable: 'never' },
+      { title: 'Transaction Date', field: 'date' },
+      { title: 'Units Purchased', field: 'units_purchased' },
+      { title: 'Description', field: 'name_description', type: 'numeric' },
+      { title: 'Cost Per Unit', field: 'cost_per_unit' },
+      { title: 'Rating', field: 'rating' },
+      { title: 'Transportation Details', field: 'transportation_details' },
+      { title: 'Decor Type', field: 'decor_type' },
     ],
     data: rows
   });
@@ -154,15 +163,6 @@ export default function EventTable(props) {
         }),
       }}
     />
-
-		<Modal
-			title="List of Transactions"
-			visible={state.visible}
-			onOk={handleOk}
-			onCancel={handleOk}
-		>
-      <TransactionTable events={state.decor_items}/>
-		</Modal>
   </div>
   );
 }

@@ -15,7 +15,7 @@ const { SubMenu } = Menu;
 let indicator = window.location.href.length > 22
 
 class NavBar extends Component {
-    
+
 	state = {
 		current: indicator? 'app': 'mail'
 	}
@@ -39,6 +39,12 @@ class NavBar extends Component {
 					<div>
           <Icon type="appstore" />
           <Link to="/events">Events View</Link>
+					</div>
+        </Menu.Item>
+        <Menu.Item key="smile">
+					<div>
+          <Icon type="smile" />
+          <Link to="/suppliers">Suppliers View</Link>
 					</div>
         </Menu.Item>
       </Menu>

@@ -10,37 +10,35 @@ import { Link } from 'react-router-dom';
 import './Table.css';
 import MaterialTable from 'material-table';
 import { Modal } from 'antd';
-import TransactionTable from './TransactionTable';
 
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 
 
-function createData (event_id, date, location, user_id, title) {
-  return { event_id, date, location, user_id, title }
+function createData (supplier_id, name, contact_info, type) {
+  return { supplier_id, name, contact_info, type }
 }
 
 
 var rows = [];
-export default function EventTable(props) {
+export default function SuppliersTable(props) {
 
 	function handleOk() {
 		setState({...state, visible: false})
 	}
   var tmp_row = []
-  var events = props.events;
-  events.forEach( (event) =>
-    tmp_row.push(createData(event.event_id, event.date, event.location, event.user_id, event.title))
+  var suppliers = props.suppliers;
+  suppliers.forEach( (supplier) =>
+    tmp_row.push(createData(supplier.supplier_id, supplier.name, supplier.contact_info, supplier.type))
   )
   rows = tmp_row;
   const [state, setState] = React.useState({
     decor_items: [],
     columns: [
-      { title: 'Event ID', field: 'event_id', type: 'numeric', editable: 'never' },
-      { title: 'Date', field: 'date' },
-      { title: 'Location', field: 'location' },
-      { title: 'User ID', field: 'user_id', type: 'numeric' },
-      { title: 'Title', field: 'title' },
+      { title: 'Supplier ID', field: 'supplier_id', type: 'numeric', editable: 'never' },
+      { title: 'Name', field: 'name' },
+      { title: 'Contact Info', field: 'contact_info' },
+      { title: 'Supplier Type', field: 'type', type: 'numeric' },
     ],
     data: rows
   });
@@ -52,40 +50,18 @@ export default function EventTable(props) {
       title=""
       columns={state.columns}
       data={state.data}
-      actions = {[
-        {
-          icon: 'contacts',
-          tooltip: 'View Transactions',
-          onClick: (event, rowData) => {
-            new Promise(resolve => {
-              setTimeout(() => {
-                {
-                  fetch(`http://localhost:9000/testApi/decor/${rowData.event_id}`)
-									.then(response => response.text())
-                  .then(response => {
-                    console.log(response);
-                    console.log(JSON.parse(response)["decor_items"]);
-                    setState({ ...state, visible: true, decor_items: JSON.parse(response)["decor_items"]  })
-									 })
-                }
-                resolve();
-              }, 600);
-            });
-          }
-        }
-      ]}
       editable={{
         onRowAdd: newData =>
           new Promise(resolve => {
             setTimeout(() => {
               {
-                fetch('http://localhost:9000/testAPI/insert_event', {
+                fetch('http://localhost:9000/testAPI/insert_supplier', {
                   method: 'POST',
                   body: JSON.stringify({
-                    event_id: newData.event_id,
-                    date: newData.date, location: newData.location,
-                    user_id: newData.user_id,
-                    title: newData.title,
+                    supplier_id: newData.supplier_id,
+                    name: newData.name,
+                    contact_info: newData.contact_info,
+                    typee: newData.type,
                   }),
                   headers: {
                     "Content-type": "application/json; charset=UTF-8"
@@ -93,7 +69,7 @@ export default function EventTable(props) {
                 }).then(response => {
                   return response.json()
                 }).then(json => {
-                  NotificationManager.success('Event created successfully!', 'Success');
+                  NotificationManager.success('Supplier created successfully!', 'Success');
                 })
                 const data = [...state.data];
                 newData.id = state.data.length + 1
@@ -112,14 +88,13 @@ export default function EventTable(props) {
                 data[index] = newData;
                 setState({ ...state, data });
 
-                fetch(`http://localhost:9000/testAPI/events/${oldData.event_id}`, {
+                fetch(`http://localhost:9000/testAPI/suppliers/${oldData.supplier_id}`, {
                   method: 'PUT',
                   body: JSON.stringify({
-                    event_id: newData.event_id,
-                    date: newData.date,
-                    location: newData.location,
-                    user_id: newData.user_id,
-                    title: newData.title,
+                    supplier_id: newData.supplier_id,
+                    name: newData.name,
+                    contact_info: newData.contact_info,
+                    type: newData.type,
                   }),
                   headers: {
                     "Content-type": "application/json; charset=UTF-8"
@@ -127,7 +102,7 @@ export default function EventTable(props) {
                 }).then(response => {
                   return response.json()
                 }).then(json => {
-                  NotificationManager.success('Event updated successfully!', 'Success');
+                  NotificationManager.success('Supplier updated successfully!', 'Success');
                 })
               }
               resolve();
@@ -141,12 +116,12 @@ export default function EventTable(props) {
               const index = data.indexOf(oldData);
               data.splice(index, 1);
               setState({ ...state, data });
-              fetch(`http://localhost:9000/testAPI/events/${oldData.event_id}`, {
+              fetch(`http://localhost:9000/testAPI/suppliers/${oldData.supplier_id}`, {
                 method: 'DELETE'
               }).then(response => {
                 return response.json()
               }).then(json => {
-                NotificationManager.success('Event deleted successfully!', 'Success');
+                NotificationManager.success('Supplier deleted successfully!', 'Success');
               })
             }
             resolve();
@@ -154,15 +129,6 @@ export default function EventTable(props) {
         }),
       }}
     />
-
-		<Modal
-			title="List of Transactions"
-			visible={state.visible}
-			onOk={handleOk}
-			onCancel={handleOk}
-		>
-      <TransactionTable events={state.decor_items}/>
-		</Modal>
   </div>
   );
 }

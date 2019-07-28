@@ -49,6 +49,18 @@ router.post('/insert_event', function(req, res, next) {
 	console.log(query.sql)
 });
 
+// Insert an supplier
+router.post('/insert_supplier', function(req, res, next) {
+    var queryPlaceholders = [];
+    queryPlaceholders.push(req.body.name)
+    queryPlaceholders.push(req.body.contact_info)
+	queryPlaceholders.push(req.body.type)
+    var query = connection.query(`INSERT INTO supplier (name, contact_info, type) VALUES (?, ?, ?, ?)`, queryPlaceholders, function(err, data) {
+              (err)?res.send(err): res.json({suppliers: data})
+		  })
+	console.log(query.sql)
+});
+
 router.get('/clients', function(req, res, next) {
 		var queryStr = 'SELECT * FROM client WHERE TRUE ';
 		var queryPlaceholders = [];
@@ -197,6 +209,39 @@ router.get('/suppliers', function(req, res, next) {
 		}
     var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
         (err)?res.send(err):res.json({suppliers: data});
+	})
+	console.log(query.sql)
+});
+//
+// Updates a row of Supplier info
+router.put('/suppliers/:supplier_id', function(req, res, next) {
+  var queryStr = 'UPDATE supplier SET ';
+  var queryPlaceholders = [];
+  if (req.body.name) {
+    queryStr += 'name = ?, ';
+    queryPlaceholders.push(req.body.name);
+  }
+  if (req.body.contact_info) {
+    queryStr += 'contact_info = ?, ';
+    queryPlaceholders.push(req.body.contact_info);
+  }
+  if (req.body.type) {
+    queryStr += 'type = ? ';
+    queryPlaceholders.push(req.body.type);
+  }
+  queryStr += 'WHERE supplier_id = ?';
+  queryPlaceholders.push(req.body.supplier_id);
+  var query = connection.query(queryStr, queryPlaceholders, function(err, data) {
+    (err)?res.send(err):res.json({suppliers: data})
+  })
+  console.log(query.sql)
+});
+
+// Delete a supplier
+router.delete('/suppliers/:supplier_id', function(req, res, next) {
+	const queryStr = 'DELETE FROM supplier WHERE supplier_id= ?';
+	var query = connection.query(queryStr, [req.params.supplier_id], function(err, data) {
+		(err)?res.send(err):res.json({suppliers: data})
 	})
 	console.log(query.sql)
 });
