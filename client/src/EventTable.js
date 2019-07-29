@@ -16,8 +16,8 @@ import {NotificationContainer, NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 
 
-function createData (event_id, date, location, user_id, title) {
-  return { event_id, date, location, user_id, title }
+function createData (event_id, event_date, location, user_id, title) {
+  return { event_id, event_date, location, user_id, title }
 }
 
 
@@ -30,14 +30,14 @@ export default function EventTable(props) {
   var tmp_row = []
   var events = props.events;
   events.forEach( (event) =>
-    tmp_row.push(createData(event.event_id, event.date, event.location, event.user_id, event.title))
+    tmp_row.push(createData(event.event_id, event.event_date, event.location, event.user_id, event.title))
   )
   rows = tmp_row;
   const [state, setState] = React.useState({
     decor_items: [],
     columns: [
       { title: 'Event ID', field: 'event_id', type: 'numeric', editable: 'never' },
-      { title: 'Date', field: 'date' },
+      { title: 'Date', field: 'event_date' },
       { title: 'Location', field: 'location' },
       { title: 'User ID', field: 'user_id', type: 'numeric' },
       { title: 'Title', field: 'title' },
